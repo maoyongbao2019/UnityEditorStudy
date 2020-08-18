@@ -64,7 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\EGO\Editor\EGOModel.cs" />
-    <Compile Include="Assets\EGO\Editor\MainWindow.cs" />
+    <Compile Include="Assets\EGO\Editor\EGOWindow.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>E:/GitHub_Project/UnityEditorStudy/EGOUnity/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
@@ -701,6 +701,12 @@
     <Reference Include="Boo.Lang">
       <HintPath>D:/Unity/unity/Editor/Data/MonoBleedingEdge/lib/mono/unityscript/Boo.Lang.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp.csproj">
+      <Project>{C8BB4E13-56E6-15D1-4B09-A59B4206D41C}</Project>
+      <Name>Assembly-CSharp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

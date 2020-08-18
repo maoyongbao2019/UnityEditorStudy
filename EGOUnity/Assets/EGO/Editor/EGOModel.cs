@@ -30,8 +30,9 @@ namespace EGO {
         }
 
         public void Save() {
+            string value = JsonUtility.ToJson(this); //键值对序列化，只序列化public的成员变量
             //存储值
-            EditorPrefs.SetString("EGO_TODOS", JsonUtility.ToJson(this));
+            EditorPrefs.SetString("EGO_TODOS", value);
         }
 
         public List<Todo> todos = new List<Todo>();
@@ -41,6 +42,17 @@ namespace EGO {
     public class Todo {
         public string Content;
         public bool Finished;
+        public bool FinishedValue {
+            get => Finished;
+            set {
+                if (value != Finished) {
+                    FinishedChanged = true; //这种方式，外界访问该变量可以控制执行的次数，而在内部使用委托的方式执行次数得不到控制
+                    Finished = value;
+                    Debug.Log("Finished:" + value);
+                }
+            }
+        }
+        public bool FinishedChanged { get; set; }
     }
 }
 
