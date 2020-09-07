@@ -5,13 +5,15 @@
     日期：#CreateTime#
 	功能：Nothing
 *****************************************************/
-using System;
+using EGO.Framework;
+using EGO.Util;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Experimental.UIElements;
 
 namespace EGO {
-
     public class EGOWindow : EditorWindow {
         private bool curtDisplayStatus = false; //当前窗口显示状态
 
@@ -22,59 +24,85 @@ namespace EGO {
             if (!window.curtDisplayStatus) {
                 //获取上次存储的值
               
-                window.mTodoList = TodoList.Load();
+                window.mTodoList = ModelLoader.Load();
                 var texture =  Resources.Load<Texture2D>("1DSC_00004"); //从resources文件夹中加载资源
                 window.titleContent = new GUIContent("EGO Window", texture);//设置窗口标题以及Icon
+                window.Init();
                 window.Show();
                 window.curtDisplayStatus = true;
+
+                window.mTodoList.todos.ForEach(todo => todo.Finished.Bind(_ => window.mTodoList.Save()));
             }
             else {
-                window.Close();
+                window.mTodoList.todos.ForEach(todo => todo.Finished.UnBindAll());
                 window.curtDisplayStatus = false;
+                window.Close();
             }
         }
 
+        void Init() {
+            mViews.Add(new SpaceView());
+            //box VerticalLayout
+            VerticalLayout layout = new VerticalLayout("box");
+            TextAreaView inputTextArea = new TextAreaView(mInputContent);
+            inputTextArea.Content.Bind(newContent => mInputContent = newContent);
+            layout.AddChild(inputTextArea);
+            layout.AddChild(new ButtonView("添加", () => {
+                if (!string.IsNullOrEmpty(mInputContent)) {
+                    var newTodo = new Todo() { Content = mInputContent };
+                    newTodo.Finished.Bind(_ => mTodoList.Save());
+                    mTodoList.todos.Add(newTodo);
+                    mTodoList.Save();
+                    Debug.Log(JsonUtility.ToJson(mTodoList));
+                }
+            }));
+            mViews.Add(layout);
+            mViews.Add(new SpaceView());
+            //为两个button进行绑定
+            mShowUnFinishedButton = new ButtonView("显示未完成", () => {
+                mShowFinished = false;
+                this.mShowUnFinishedButton.Hide();
+                this.mShowFinishedButton.Show();
+            });
+            mShowFinishedButton = new ButtonView("显示已完成", () => {
+                mShowFinished = true;
+                this.mShowUnFinishedButton.Show();
+                this.mShowFinishedButton.Hide();
+            });
+            mShowFinishedButton.Show(); 
+            mShowUnFinishedButton.Hide();//默认显示未完成
+            mViews.Add(mShowFinishedButton);
+            mViews.Add(mShowUnFinishedButton);
+            // layout = new VerticalLayout("box");
+            var boxlayout = new VerticalLayout("box");
+            foreach(var todo in mTodoList.todos.Where(todo => todo.Finished.value == mShowFinished)) {
+                var horizontallayout = new HorizontalLayout();
+                var toggleView = new ToggleView(todo.Content, todo.Finished.value);
+                toggleView.Toggle.Bind(value => { todo.Finished.value = value; });
+                horizontallayout.AddChild(toggleView);
+                var buttonView = new ButtonView("删除", () => {
+                    todo.Finished.UnBindAll();
+                    mTodoList.todos.Remove(todo);
+                    mTodoList.Save();
+                });
+                horizontallayout.AddChild(buttonView);
+                boxlayout.AddChild(horizontallayout);
+            }
+            mViews.Add(boxlayout);
+        }
+        private ButtonView mShowUnFinishedButton = null;
+        private ButtonView mShowFinishedButton = null;
+
         TodoList mTodoList = new TodoList(); //待办事项
 
+        private bool mShowFinished = false;//用于折叠，显示已完成的行
+
         private string mInputContent = string.Empty;
+
+        private List<IView> mViews = new List<IView>();
         private void OnGUI() {
             //GUILayout.Label("测试");
-            GUILayout.Space(10);
-
-            GUILayout.BeginVertical("box");
-
-            mInputContent = EditorGUILayout.TextArea(mInputContent); 
-
-            if (GUILayout.Button("添加")) {
-                if (!string.IsNullOrEmpty(mInputContent)) {
-                    mTodoList.todos.Add(new Todo() { Content = mInputContent });
-                    mTodoList.Save();
-                }
-            }
-            GUILayout.EndVertical();
-
-            GUILayout.Space(10);
-            //添加的布局
-            GUILayout.BeginVertical("box");
-            for (int i=mTodoList.todos.Count-1;i>=0;i--) {
-                var todo = mTodoList.todos[i];
-                #region 编写每行的菜单
-                EditorGUILayout.BeginHorizontal();
-                todo.FinishedValue = GUILayout.Toggle(todo.FinishedValue, todo.Content);
-
-                if (todo.FinishedChanged) {
-                    todo.FinishedChanged = false;
-                    mTodoList.Save();
-                }
-
-                if (GUILayout.Button("删除")) { //右边删除按钮
-                    mTodoList.todos.RemoveAt(i);
-                    mTodoList.Save();
-                }
-                EditorGUILayout.EndHorizontal();
-                #endregion
-            }
-            GUILayout.EndVertical();
+            mViews.ForEach(view => view.DrawGUI());  
         }
     }
 }

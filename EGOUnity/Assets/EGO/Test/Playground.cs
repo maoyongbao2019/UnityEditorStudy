@@ -6,14 +6,19 @@
 	功能：Nothing
 *****************************************************/
 
-using EGO.Util;
+using EGO.Framework;
+using Newtonsoft.Json;
+using NUnit.Framework;
 using UnityEngine;
 namespace Tests {
     public class Playground {
+        [Test]
         public void PlaygroundSimplePasses() {
-            var p = new InitProperty();
-            p.Value = 10;
-            Debug.Log(JsonUtility.ToJson(p));
+            var p = new Property<bool>();
+            p.value = false;
+            string jsonValue = JsonConvert.SerializeObject(p);
+            Debug.Log(JsonConvert.DeserializeObject<Property<bool>>(jsonValue));
+            Assert.IsTrue(true);
         }
     }
 }

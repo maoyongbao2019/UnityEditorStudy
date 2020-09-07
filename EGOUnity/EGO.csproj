@@ -63,11 +63,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\EGO\Deprecated\Model.cs" />
     <Compile Include="Assets\EGO\Editor\EGOModel.cs" />
     <Compile Include="Assets\EGO\Editor\EGOWindow.cs" />
-    <Compile Include="Assets\EGO\Test\Playgr.cs" />
+    <Compile Include="Assets\EGO\Framework\DataBinding\Property.cs" />
+    <Compile Include="Assets\EGO\Framework\Drawer\Interface\ILayout.cs" />
+    <Compile Include="Assets\EGO\Framework\Drawer\Interface\IView.cs" />
+    <Compile Include="Assets\EGO\Framework\Drawer\Interface\Layout.cs" />
+    <Compile Include="Assets\EGO\Framework\Drawer\Interface\View.cs" />
+    <Compile Include="Assets\EGO\Framework\Drawer\Layout\HorizontalLayout.cs" />
+    <Compile Include="Assets\EGO\Framework\Drawer\Layout\VerticalLayout.cs" />
+    <Compile Include="Assets\EGO\Framework\Drawer\Views\ButtonView.cs" />
+    <Compile Include="Assets\EGO\Framework\Drawer\Views\CustomView.cs" />
+    <Compile Include="Assets\EGO\Framework\Drawer\Views\SpaceView.cs" />
+    <Compile Include="Assets\EGO\Framework\Drawer\Views\TextAreaView.cs" />
+    <Compile Include="Assets\EGO\Framework\Drawer\Views\ToggleView.cs" />
     <Compile Include="Assets\EGO\Test\Playground.cs" />
-    <Compile Include="Assets\EGO\Util\Propety.cs" />
+    <Compile Include="Assets\EGO\Util\ModelLoader.cs" />
+    <Compile Include="Assets\EGO\Util\ModelUpdater.cs" />
     <Reference Include="UnityEngine.AIModule">
       <HintPath>D:/Unity/unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
     </Reference>
@@ -310,6 +323,9 @@
     </Reference>
     <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
       <HintPath>C:/Program Files (x86)/Microsoft Visual Studio Tools for Unity/16.0/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>E:/GitHub_Project/UnityEditorStudy/EGOUnity/Assets/JsonDotNet/Assemblies/Standalone/Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.Advertisements">
       <HintPath>E:/GitHub_Project/UnityEditorStudy/EGOUnity/Library/PackageCache/com.unity.ads@2.0.8/Editor/UnityEditor.Advertisements.dll</HintPath>
